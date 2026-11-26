@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>miniS3 &mdash; {{.Bucket}}</title>
+<link rel="stylesheet" href="/ui/static/style.css">
+<script src="/ui/static/htmx.min.js"></script>
+</head>
+<body>
+<header>
+  <h1>miniS3</h1>
+  <span class="bucket">bucket: <strong>{{.Bucket}}</strong></span>
+  <span id="versioning" hx-get="/ui/versioning" hx-trigger="load" hx-swap="innerHTML"></span>
+</header>
+<main>
+  <div class="toolbar">
+    <form class="upload" hx-post="/ui/upload" hx-encoding="multipart/form-data"
+          hx-target="#listing" hx-swap="innerHTML">
+      <input type="hidden" name="prefix" value="{{.Prefix}}">
+      <input type="file" name="file" required>
+      <button type="submit">Upload</button>
+      <progress id="upload-progress" value="0" max="100" hidden></progress>
+    </form>
+    <form class="search" hx-get="/ui/browse" hx-target="#listing" hx-swap="innerHTML"
+          hx-trigger="submit" hx-push-url="/ui/">
+      <input type="hidden" name="delimiter" value="/">
+      <input type="search" name="prefix" value="{{.Prefix}}" placeholder="prefix filter (e.g. docs/)">
+      <button type="submit">Browse</button>
+    </form>
+  </div>
+  <div id="listing" hx-get="{{.BrowseURL}}" hx-trigger="load" hx-target="#listing" hx-swap="innerHTML"></div>
+  <section>
+    <h2>Object versions</h2>
+    <div id="versions-panel"><p class="muted">Pick &ldquo;versions&rdquo; on an object to see its versions here.</p></div>
+  </section>
+</main>
+<script src="/ui/static/app.js"></script>
+</body>
+</html>

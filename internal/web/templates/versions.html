@@ -1,0 +1,29 @@
+<p>Versions of <code>{{.Key}}</code></p>
+{{if .Versions}}
+<table>
+  <thead>
+    <tr><th>VersionId</th><th class="num">Size</th><th>Modified</th><th>ETag</th><th>Latest</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {{range .Versions}}
+    <tr{{if .DeleteMarker}} class="marker"{{end}}>
+      <td class="mono">{{.VersionID}}</td>
+      <td class="num">{{.SizeHuman}}</td>
+      <td>{{.Modified}}</td>
+      <td class="mono etag">{{.ETag}}</td>
+      <td>{{if .IsLatest}}latest{{end}}{{if .DeleteMarker}}delete marker{{end}}</td>
+      <td class="actions">
+        {{if not .DeleteMarker}}<a href="/ui/download?key={{$.KeyEsc}}&amp;versionId={{.VersionID}}">download</a>{{end}}
+        <form hx-post="/ui/delete" hx-target="#versions-panel" hx-swap="innerHTML"
+              hx-confirm="Delete version {{.VersionID}}?" class="inline">
+          <input type="hidden" name="key" value="{{$.Key}}">
+          <input type="hidden" name="versionId" value="{{.VersionID}}">
+          <input type="hidden" name="panel" value="versions">
+          <button type="submit" class="danger">delete</button>
+        </form>
+      </td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{else}}<p class="muted">No versions for this key.</p>{{end}}

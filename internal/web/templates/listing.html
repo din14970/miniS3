@@ -1,0 +1,37 @@
+<nav class="crumbs">
+  <a hx-get="/ui/browse?delimiter=/" hx-target="#listing" hx-swap="innerHTML" href="/ui/">root</a>
+  {{range .Crumbs}}<span class="sep">/</span><a hx-get="{{.URL}}" hx-target="#listing" hx-swap="innerHTML" href="#">{{.Name}}</a>{{end}}
+</nav>
+{{if .Prefix}}<p class="prefix">prefix: <code>{{.Prefix}}</code></p>{{end}}
+<table>
+  <thead>
+    <tr><th>Name</th><th class="num">Size</th><th>Modified</th><th>ETag</th><th>Actions</th></tr>
+  </thead>
+  <tbody>
+    {{range .Prefixes}}
+    <tr class="dir">
+      <td><a hx-get="{{.URL}}" hx-target="#listing" hx-swap="innerHTML" href="#">&#128193; {{.Name}}</a></td>
+      <td class="num">&mdash;</td><td></td><td></td><td></td>
+    </tr>
+    {{end}}
+    {{range .Objects}}
+    <tr>
+      <td class="mono">{{.Key}}</td>
+      <td class="num">{{.SizeHuman}}</td>
+      <td>{{.Modified}}</td>
+      <td class="mono etag">{{.ETag}}</td>
+      <td class="actions">
+        <a href="/ui/download?key={{.KeyEsc}}">download</a>
+        <a hx-get="/ui/versions?key={{.KeyEsc}}" hx-target="#versions-panel" hx-swap="innerHTML" href="#">versions</a>
+        <form hx-post="/ui/delete" hx-target="#listing" hx-swap="innerHTML"
+              hx-confirm="Delete {{.Key}}?" class="inline">
+          <input type="hidden" name="key" value="{{.Key}}">
+          <input type="hidden" name="prefix" value="{{$.Prefix}}">
+          <button type="submit" class="danger">delete</button>
+        </form>
+      </td>
+    </tr>
+    {{end}}
+  </tbody>
+</table>
+{{if not .Objects}}{{if not .Prefixes}}<p class="empty">No objects under this prefix.</p>{{end}}{{end}}

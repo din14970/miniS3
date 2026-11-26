@@ -1,0 +1,12 @@
+<span class="versioning">versioning: <strong>{{if .Status}}{{.Status}}{{else}}disabled{{end}}</strong></span>
+{{if eq .Status "Enabled"}}
+<form hx-post="/ui/versioning" hx-target="#versioning" hx-swap="innerHTML" class="inline">
+  <input type="hidden" name="status" value="Suspended">
+  <button type="submit">suspend</button>
+</form>
+{{else}}
+<form hx-post="/ui/versioning" hx-target="#versioning" hx-swap="innerHTML" class="inline">
+  <input type="hidden" name="status" value="Enabled">
+  <button type="submit">enable</button>
+</form>
+{{end}}
